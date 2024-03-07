@@ -1,0 +1,55 @@
+version: "3.8"
+services:
+  # frontend:
+  #   container_name: frontend
+  #   build: 
+  #     context: ./
+  #     dockerfile: ./FrontEnd/Dockerfile
+  #   environment:
+  #     TZ: Asia/Tokyo
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./FrontEnd:/var/www/todoapp/frontend
+  #     - node_modules:/var/www/todoapp/frontend/node_modules
+  #   working_dir: /var/www/todoapp/frontend
+  #   command: npm run dev
+
+  backend:
+    container_name: backend
+    build:
+      context: ./
+      dockerfile: ./BackEnd/BackEnd/Dockerfile
+    ports:
+      - 5000:5000
+      - 5001:5001
+    environment:
+      - TZ=Asia/Tokyo
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000;https://+:5001
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/ToDoApp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=ToDoApp
+      - ConnectionStrings__DefaultConnection=Server=database;Initial Catalog=TodoApp;User ID =TodoApp;Password=TodoApp;TrustServerCertificate=true;MultipleActiveResultSets=True
+    volumes:
+      - /${USERPROFILE}/.aspnet/https:/https:ro
+    depends_on:
+      - database
+    
+  database:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: database
+    ports:
+      - 1433:1433
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=ToDoApp_2024
+      - MSSQL_PID=Express
+      - MSSQL_LCID=1041
+      - MSSQL_COLLATION=Japanese_CI_AS
+    volumes:
+      - ms-sqlserver-linux-test-data:/var/opt/mssql
+      - ./backup:/backup
+
+volumes:
+  node_modules:
+  ms-sqlserver-linux-test-data:
