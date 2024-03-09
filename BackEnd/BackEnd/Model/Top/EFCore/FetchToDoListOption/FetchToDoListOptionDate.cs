@@ -8,6 +8,7 @@ public class FetchToDoListOptionDate(GetToDoListDto dto) : FetchToDoListOptionBa
 {
     public override ToDo[] Filter(ToDo[] toDos)
     {
+        if(!Dto.Date.HasValue) return toDos;
         return toDos.Where(x => x.Date.Equal(Dto.Date)).ToArray();
     }
 }

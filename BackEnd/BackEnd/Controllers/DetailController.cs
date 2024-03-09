@@ -10,7 +10,7 @@ public class DetailController(ToDoAppContext context) : ControllerBase
 {
     public DetailBL BL { get; protected set; } = new DetailBL(context);
 
-    [HttpGet("")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetToDo([FromRoute] Guid id)
     {
         var toDo = await BL.GetToDo(id);
