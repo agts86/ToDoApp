@@ -1,16 +1,17 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BackEnd.DataBase.Model;
+namespace BackEnd.DataBase.Table;
 
 [Table("ToDo")]
-public class ToDo
+public class ToDo : Meta
 {
     [Key]
     [Column("Id")]
     public Guid Id { get; set; }
 
     [Column("Title")]
+    [Required]
     [MaxLength(20)]
     public string Title { get; set; }
 
@@ -21,6 +22,7 @@ public class ToDo
     public DateTime Date { get; set; }
 
     [Column("Content")]
+    [Required]
     public string Content { get; set; }
 
     [Column("StatusId")]

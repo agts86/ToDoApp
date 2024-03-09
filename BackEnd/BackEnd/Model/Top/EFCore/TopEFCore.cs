@@ -1,6 +1,6 @@
 using System.Reflection;
 using BackEnd.DataBase;
-using BackEnd.DataBase.Model;
+using BackEnd.DataBase.Table;
 using BackEnd.Model.Top.Dto;
 using Microsoft.EntityFrameworkCore;
 using BackEnd.Model.Top.EFCore.FetchToDoListOption;
@@ -10,16 +10,6 @@ namespace BackEnd.Model.Top.EFCore;
 public class TopEFCore(ToDoAppContext context)
 {
     public ToDoAppContext Context { get; set; } = context;
-  
-    public async Task<Genre[]> FetchGenres()
-    {
-        return await Context.Genres.AsNoTracking().ToArrayAsync();
-    }
-
-    public async Task<Status[]> FetchStatuses()
-    {
-        return await Context.Statuses.AsNoTracking().ToArrayAsync();
-    }
 
     public async Task<ToDo[]> FetchToDoList(GetToDoListDto dto)
     {

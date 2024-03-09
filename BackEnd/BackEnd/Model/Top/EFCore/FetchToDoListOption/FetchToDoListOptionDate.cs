@@ -1,5 +1,5 @@
 using BackEnd.Model.Top.Dto;
-using BackEnd.DataBase.Model;
+using BackEnd.DataBase.Table;
 using BackEnd.Extensions;
 
 namespace BackEnd.Model.Top.EFCore.FetchToDoListOption;

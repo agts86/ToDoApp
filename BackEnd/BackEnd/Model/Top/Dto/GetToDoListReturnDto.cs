@@ -1,4 +1,4 @@
-using BackEnd.DataBase.Model;
+using BackEnd.DataBase.Table;
 
 namespace BackEnd.Model.Top.Dto;
 

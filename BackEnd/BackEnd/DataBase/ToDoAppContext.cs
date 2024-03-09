@@ -1,6 +1,7 @@
-﻿using BackEnd.DataBase.Model;
+﻿using BackEnd.DataBase.Table;
 using Microsoft.EntityFrameworkCore;
-
+using System.Reflection;
+using BackEnd.DataBase.SaveChanges;
 namespace BackEnd.DataBase;
 
 public class ToDoAppContext(DbContextOptions<ToDoAppContext> options) : DbContext(options)
@@ -25,6 +26,26 @@ public class ToDoAppContext(DbContextOptions<ToDoAppContext> options) : DbContex
         {
             entity.HasKey(e => new {e.Id});
         });
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        foreach (var entry in ChangeTracker.Entries())
+        {
+            if (entry.Entity is not Meta meta) continue;
+
+            var saveChanges = Assembly.GetExecutingAssembly().GetTypes()
+                .Where(x => typeof(SaveChangesBase).IsAssignableFrom(x) && !x.IsAbstract)
+                .Select(x => (SaveChangesBase)Activator.CreateInstance(x,entry.State))
+                .ToArray();
+            foreach (var saveChange in saveChanges)
+            {
+                if(entry.State != saveChange.EntityState) continue;
+                saveChange.ChangeMeta(meta);
+            }
+
+        }
+        return base.SaveChangesAsync(cancellationToken);
     }
 }
 
