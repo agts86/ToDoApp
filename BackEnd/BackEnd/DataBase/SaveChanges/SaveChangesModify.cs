@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BackEnd.DataBase.SaveChanges;
 
-public class SaveChangesModify(EntityState entityState) : SaveChangesBase(entityState)
+public class SaveChangesModify: ISaveChanges
 {
-    public override void ChangeMeta(Meta meta)
+    public EntityState EntityState { get; set; } = EntityState.Modified;
+    public void ChangeMeta(Meta meta)
     {
+        meta.CreatedAt = DateTime.Now;
         meta.UpdatedAt = DateTime.Now;
     }
 }

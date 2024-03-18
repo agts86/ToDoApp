@@ -1,4 +1,5 @@
 using BackEnd.DataBase;
+using BackEnd.Model;
 using BackEnd.Model.Confirm.Dto;
 using BackEnd.Model.Confirm;
 using Microsoft.AspNetCore.Mvc;
@@ -21,14 +22,28 @@ public class ConfirmController(ToDoAppContext context) : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateToDo([FromRoute] Guid id,[FromBody] ToDoDto dto)
     {
-        await BL.UpdateToDo(id,dto);
-        return Ok();
+        try
+        {
+            await BL.UpdateToDo(id,dto);
+            return Ok();
+        }
+        catch (NotFoundException)
+        {
+            return NotFound(id);
+        }      
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteToDo([FromRoute] Guid id)
     {
-        await BL.DeleteToDo(id);
-        return Ok();
+        try
+        {
+            await BL.DeleteToDo(id);
+            return Ok();
+        }
+        catch (NotFoundException)
+        {
+            return NotFound(id);
+        }
     }
 }

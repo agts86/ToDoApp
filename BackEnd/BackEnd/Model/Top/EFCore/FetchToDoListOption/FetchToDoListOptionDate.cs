@@ -6,9 +6,9 @@ namespace BackEnd.Model.Top.EFCore.FetchToDoListOption;
 
 public class FetchToDoListOptionDate(GetToDoListDto dto) : FetchToDoListOptionBase(dto)
 {
-    public override ToDo[] Filter(ToDo[] toDos)
+    public override IQueryable<ToDo> Filter(IQueryable<ToDo> toDos)
     {
         if(!Dto.Date.HasValue) return toDos;
-        return toDos.Where(x => x.Date.Equal(Dto.Date)).ToArray();
+        return toDos.Where(x => x.Date.Equal(Dto.Date));
     }
 }

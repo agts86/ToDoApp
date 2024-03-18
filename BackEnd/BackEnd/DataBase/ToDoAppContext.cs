@@ -35,8 +35,8 @@ public class ToDoAppContext(DbContextOptions<ToDoAppContext> options) : DbContex
             if (entry.Entity is not Meta meta) continue;
 
             var saveChanges = Assembly.GetExecutingAssembly().GetTypes()
-                .Where(x => typeof(SaveChangesBase).IsAssignableFrom(x) && !x.IsAbstract)
-                .Select(x => (SaveChangesBase)Activator.CreateInstance(x,entry.State))
+                .Where(x => typeof(ISaveChanges).IsAssignableFrom(x) && !x.IsInterface)
+                .Select(x => (ISaveChanges)Activator.CreateInstance(x,entry.State))
                 .ToArray();
             foreach (var saveChange in saveChanges)
             {

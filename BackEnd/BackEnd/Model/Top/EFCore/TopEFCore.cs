@@ -1,9 +1,9 @@
-using System.Reflection;
 using BackEnd.DataBase;
 using BackEnd.DataBase.Table;
 using BackEnd.Model.Top.Dto;
 using Microsoft.EntityFrameworkCore;
 using BackEnd.Model.Top.EFCore.FetchToDoListOption;
+using BackEnd.Util;
 
 namespace BackEnd.Model.Top.EFCore;
 
@@ -13,20 +13,18 @@ public class TopEFCore(ToDoAppContext context)
 
     public async Task<ToDo[]> FetchToDoList(GetToDoListDto dto)
     {
-        var todo = await Context.ToDos.AsNoTracking()
-            .Include(x => x.Genre)
-            .Include(x => x.Status)
-            .Where(x => x.GenreId == dto.Genre)
-            .Where(x => x.StatusId == dto.Status)
-            .ToArrayAsync();
-        var FilterOptions = Assembly.GetExecutingAssembly().GetTypes()
-            .Where(x => typeof(FetchToDoListOptionBase).IsAssignableFrom(x) && !x.IsAbstract)
-            .Select(x => (FetchToDoListOptionBase)Activator.CreateInstance(x, dto))
-            .ToArray();
+        var todo = Context.ToDos.AsNoTracking();
+
+        var FilterOptions = Polymorphism.CreatePolymorphismArray<FetchToDoListOptionBase>(dto);
+            
         foreach (var option in FilterOptions)
         {
             todo = option.Filter(todo);
         }
-        return todo;
+
+        return await todo
+            .Include(x => x.Genre)
+            .Include(x => x.Status)
+            .ToArrayAsync();
     }
 }

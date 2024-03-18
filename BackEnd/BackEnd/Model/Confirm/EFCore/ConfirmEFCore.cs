@@ -33,7 +33,7 @@ public class ConfirmEFCore(ToDoAppContext context)
 
     public async Task UpdateToDo(Guid id,ToDoDto dto)
     {
-        var todo = await FetchToDo(id);
+        var todo = await FetchToDo(id) ?? throw new NotFoundException();
         todo.Title = dto.Title;
         todo.GenreId = dto.Genre;
         todo.Date = dto.Date;
@@ -45,7 +45,7 @@ public class ConfirmEFCore(ToDoAppContext context)
 
     public async Task DeleteToDo(Guid id)
     {
-        var todo = await FetchToDo(id);
+        var todo = await FetchToDo(id) ?? throw new NotFoundException();
         Context.ToDos.Remove(todo);
         await Context.SaveChangesAsync();
     }
