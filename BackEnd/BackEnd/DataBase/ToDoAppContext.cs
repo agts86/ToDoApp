@@ -1,6 +1,6 @@
 ﻿using BackEnd.DataBase.Table;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
+using BackEnd.Util;
 using BackEnd.DataBase.SaveChanges;
 namespace BackEnd.DataBase;
 
@@ -34,10 +34,8 @@ public class ToDoAppContext(DbContextOptions<ToDoAppContext> options) : DbContex
         {
             if (entry.Entity is not Meta meta) continue;
 
-            var saveChanges = Assembly.GetExecutingAssembly().GetTypes()
-                .Where(x => typeof(ISaveChanges).IsAssignableFrom(x) && !x.IsInterface)
-                .Select(x => (ISaveChanges)Activator.CreateInstance(x,entry.State))
-                .ToArray();
+            var saveChanges = Polymorphism.CreatePolymorphismArray<ISaveChanges>();
+                
             foreach (var saveChange in saveChanges)
             {
                 if(entry.State != saveChange.EntityState) continue;
