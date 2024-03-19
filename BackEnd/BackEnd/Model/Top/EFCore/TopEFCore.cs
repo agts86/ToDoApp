@@ -13,7 +13,10 @@ public class TopEFCore(ToDoAppContext context)
 
     public async Task<ToDo[]> FetchToDoList(GetToDoListDto dto)
     {
-        var todo = Context.ToDos.AsNoTracking();
+        var todo = Context.ToDos.AsNoTracking()
+            .Include(x => x.Genre)
+            .Include(x => x.Status)
+            .AsQueryable();
 
         var FilterOptions = Polymorphism.CreatePolymorphismArray<FetchToDoListOptionBase>(dto);
             
@@ -22,9 +25,6 @@ public class TopEFCore(ToDoAppContext context)
             todo = option.Filter(todo);
         }
 
-        return await todo
-            .Include(x => x.Genre)
-            .Include(x => x.Status)
-            .ToArrayAsync();
+        return await todo.ToArrayAsync();
     }
 }
